@@ -1,0 +1,24 @@
+h1{
+    color: blue;
+}
+
+body {
+    text-align: center;
+}
+
+  .board-container {
+    margin: auto;
+}
+
+
+.cell {
+    font-size: 1.5em;
+    width: 2em;
+    height: 2em;
+    border:1px solid black
+  }
+  
+  .zero-cell{
+    background-color: gray; 
+  }
+  
