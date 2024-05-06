@@ -2,11 +2,12 @@
 const MINE ='MINE'
 const FLAG = 'FLAG'
 
-
 const MINE_IMG = '💣'
 const FLAG_IMG = '🚩'
 const LIVE_IMG = '❤️'
-
+const SMILY_IMG = '😀'
+const LOSE_IMG = '😭'
+const WIN_IMG = '😎'
 var gBoard //The model
 var minesLoc = []
 
@@ -33,6 +34,10 @@ const gLevel = [
 
 var level = gLevel[0]
 var lives = 3
+var isFirstClick = true
+var setTime = 0
+var flagsCount = level.MINES
+
 //This is an object in which youcan keep and update thecurrent game state:
 var gGame = {
     isOn: false,  //isOn: Boolean, when true welet the user play
@@ -45,14 +50,13 @@ var gGame = {
 //DONE: call buildBoard() and renderBoard() here
 function onInit() {   
     gBoard = buildBoard(level.SIZE)
-    // addMines(level.MINES)
-    // setMinesNegsCount(gBoard)
     renderBoard(gBoard)
 }
 
 function restartGame(){
     minesLoc = []
     lives = 3
+    isFirstClick = true
     gGame = {
         isOn: false,  
         shownCount: 0,
@@ -62,35 +66,55 @@ function restartGame(){
     onInit()
 }
 
+
 function selectLevel(i){
     level = gLevel[i]
+    flagsCount = level.MINES
     restartGame()
+    clearInterval(setTime)
 }
 
+
+
 function createBtnLevel(){
-    var btnVal = '' 
+    var btnVal = ''
     for (var i = 0; i < 3; i++) {
      btnVal += `<button onclick="selectLevel(${i})">${gLevel[i].LEVEL}</button>`     
 }  
-var elBtnContainer= document.querySelector('.btn-container')
+var elBtnContainer = document.querySelector('.btn-container')
 elBtnContainer.innerHTML = btnVal
+}
+
+function createTimer(){
+    var timerVal = ''
+    timerVal = `<div id="timer" class="timer">Time: 000</div>`     
+
+var elTimerContainer = document.querySelector('.timer-container')
+elTimerContainer.innerHTML = timerVal
 }
 
 
 function createLives(){ 
-    var divVal = '' 
+    var livesVal = '' 
     for (var i = 0; i < lives; i++) {
-        divVal += `<div>${LIVE_IMG}</div>`     
+        livesVal += `<div class="live">${LIVE_IMG}</div>`     
 }  
-var elDetailsContainer = document.querySelector('.lives-container')
-elDetailsContainer.innerHTML = divVal
+var ellivesContainer = document.querySelector('.lives-container')
+ellivesContainer.innerHTML = livesVal
 }
+
 //DONE: Builds the board 
-//TODO: Set the mines 
+//DONE: Set the mines 
 //DONE: Return the created board
+
 function buildBoard(size) {
     createLives()
     createBtnLevel()
+    creatSmily()
+    createTimer()
+    createFlagCounter()
+
+
     var board=[]
    //model A Matrix containing cell objects:Each cell
     for(var i =0 ; i <size ; i++){
@@ -110,10 +134,10 @@ function buildBoard(size) {
 
 
 //DONE Render the board as a <table> to the page 
-//TODO displaying each cell with its appropriate state (shown, hidden, flag)
-
 function renderBoard(board){
     checkGameOver()
+    
+   
     console.log(gGame.shownCount , gGame.markedCount)
     var strHTML = ''
     for (var i = 0; i < board.length; i++) {
@@ -122,7 +146,7 @@ function renderBoard(board){
             const cellLoc = board[i][j]
             var numOfMinesAroundCell = cellLoc.minesAroundCount
             const className = `cell cell-${i}-${j}`
-            var zeroCell =''
+            var isShownCell =''
             var cellView = ''
           
             if(cellLoc.isShown && !cellLoc.isMarked ){
@@ -130,24 +154,32 @@ function renderBoard(board){
                 cellView = MINE_IMG
                 }else{
                 cellView = numOfMinesAroundCell === 0 ? '' : numOfMinesAroundCell
-                zeroCell = cellLoc.minesAroundCount === 0? "zero-cell" : ''              
+                isShownCell = cellLoc.isShown? "is-shown-cell" : ''              
                 }
             } 
             if(cellLoc.isMarked){
                 cellView = FLAG_IMG
+             
             }  
-          
+
+              
             strHTML += 
-            `<td class="${className} ${zeroCell}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(event, this, ${i} ,${j})"> 
+            `<td class="${className} ${isShownCell}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(event, this, ${i} ,${j})"> 
             ${cellView}
-            </td>`                 
+            </td>`  
+            
+            
         }
         strHTML += '</tr>'
     }
     const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
-    
+ 
 } 
+
+
+
+
 function countMinesAroundCell(board, rowIdx, colIdx) { 
     var count = 0
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
@@ -186,16 +218,22 @@ for (var i = 0; i < board.length; i++) {
 // • Cell with neighbors – reveal the cell alone
 // • Cell without neighbors – expand it and its 1st degree
 // neighbors
+
+var startTime
 function onCellClicked(elCell, i, j){ 
     const cellLoc = gBoard[i][j]
 
-    if (!gGame.isOn) {
+    if (isFirstClick) {
+       startTime = Date.now()
+        setTime =  setInterval(elTimer, 1000)
+
         addMines(level.MINES, i, j)
         setMinesNegsCount(gBoard)
         gGame.isOn = true
+        isFirstClick = false
     }
 
-    if(cellLoc.isMarked) return
+    if(cellLoc.isMarked || cellLoc.isShown || !gGame.isOn) return
     if(!cellLoc.isMine){
         if( cellLoc.minesAroundCount === 0){                      
             expandShown(gBoard, elCell,i, j)   
@@ -211,8 +249,10 @@ function onCellClicked(elCell, i, j){
          }else{
             if(lives > 0){
                 lives--
+                playSound('lostLive')
+
                 createLives()
-                console.log(lives)
+
             }else{
                 for(var x = 0; x < minesLoc.length; x++ ){
                     minesLoc[x].isShown = true      
@@ -223,13 +263,8 @@ function onCellClicked(elCell, i, j){
  
         renderBoard(gBoard)    
     }
-         
-
-   
+          
 }
-
-
-
 
 //TODO needed to add img
 //DONE for loop with getRandomCellLoc - at the util
@@ -244,18 +279,64 @@ function addMines(numOfMines, firstClickedRow, firstClickedcol){
         }
 }
 
+
+
+  
 //DONE Called when a cell is **rightclicked** , See how you can hide the context 
 //DONE Implement the logic to mark the cell with a flag and update the game state
 //DONELeft click reveals the cell’s content
 //DONE Right click flags/unflags a suspected cell (cannot reveal a flagged cell)
 // this is te rigth click 
+
 function onCellMarked(event ,elCell, i, j){
    event.preventDefault()
-   if(gBoard[i][j].isShown && !gBoard[i][j].isMarked) return
-   gBoard[i][j].isMarked = !gBoard[i][j].isMarked 
-   gBoard[i][j].isMarked? gGame.markedCount++ : gGame.markedCount-- 
+var cellLoc = gBoard[i][j]
+   if(cellLoc.isShown && !cellLoc.isMarked || !gGame.isOn) return
+   cellLoc.isMarked = !cellLoc.isMarked 
+   cellLoc.isMarked? gGame.markedCount++ : gGame.markedCount--  
+   cellLoc.isMarked? flagsCount-- : flagsCount++
+       createFlagCounter()
+   console.log( 'gGame.markedCount' ,  gGame.markedCount, 'flagsCount: ', flagsCount)
    renderBoard(gBoard)  
 }
+
+
+function createFlagCounter(){ 
+    var FlagCounterVal = '' 
+    FlagCounterVal = `<div class="counter">mines to mark: ${flagsCount}</div>`     
+ 
+var elFlagCounterContainer = document.querySelector('.flagCounter-Container')
+    elFlagCounterContainer.innerHTML = FlagCounterVal
+}
+
+
+function creatSmily(gameStatus){ 
+    var smilyVal = '' 
+    var smileyFace
+
+    switch(gameStatus){
+        case 'normal':
+            smileyFace = SMILY_IMG
+            break
+        case 'lose':
+            smileyFace = LOSE_IMG 
+            break  
+        case 'win':
+            smileyFace = WIN_IMG 
+            break   
+        default:
+            smileyFace = SMILY_IMG    
+
+    }
+
+    smilyVal = `<div class="smily">${smileyFace}</div>`     
+
+var elSmilyContainer = document.querySelector('.smily-container')
+elSmilyContainer.innerHTML = smilyVal
+}
+
+
+
 
 //TODO Game ends when all mines are marked, and all the other cells are shown 
 //TODO The smiley face needs to change  :)
@@ -264,10 +345,16 @@ function onCellMarked(event ,elCell, i, j){
 
 function checkGameOver(checkIfLost){
     if(checkIfLost === true){
-        console.log('you lost')
+        gGame.isOn = false
+        creatSmily('lose')
+        playSound('lostGame')
+        clearInterval(setTime)
        }
    if(gGame.shownCount + gGame.markedCount === Math.pow(level.SIZE, 2) && gGame.markedCount === minesLoc.length){
-    console.log('you won')
+    gGame.isOn = false
+    creatSmily('win')
+    playSound('winGame')
+    clearInterval(setTime)
    }
   
    
@@ -295,14 +382,10 @@ function expandShown(board, elCell,rowIdx, colIdx){
    renderBoard(gBoard)  
 }
 
-
 function elTimer() {
-    const elapsedTime = (Date.now() - startTime) / 10
-    const formattedTime = elapsedTime.toFixed(3)
+    const elapsedTime = (Date.now() - startTime) /1000
+    const formattedTime = elapsedTime.toFixed(0).padStart(3, '0')
     document.getElementById('timer').textContent = `Time: ${formattedTime}`
 }
 
  
-
-
-

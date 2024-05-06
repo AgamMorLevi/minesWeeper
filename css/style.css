@@ -1,24 +1,109 @@
+*{
+    box-sizing: border-box;
+}
+
+:root{
+ --CellbackgroundColor: linear-gradient(to right,#433e3e8a, #00edffd6);
+ --textColor : white; 
+ --font: cursive;
+}
+
 h1{
-    color: blue;
+    color: var(--textColor);
+    font-size: 40px;
+}
+html, body {
+  max-height: 75ch;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+    font-family: var(--font);
     text-align: center;
+    background-color: #000000e3;  
 }
 
   .board-container {
-    margin: auto;
+    display: flex;
+    justify-content: center;
+    transform: translateX(-22px);
 }
 
-
 .cell {
+    background-image: var(--CellbackgroundColor);
     font-size: 1.5em;
     width: 2em;
     height: 2em;
-    border:1px solid black
+    border: 1px solid white;
+    border-radius: 4px;
+    color:var(--textColor);
+    font-weight: 600;
+    cursor: pointer;
+
   }
   
-  .zero-cell{
-    background-color: gray; 
+  .is-shown-cell{
+    background-color: #000000;
+    background-image: none;
+  }
+
+  .lives-container{
+    padding: 0 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 55px;
   }
   
+  .live{
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  .btn-container{
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 10%;
+    border-bottom: 1px solid var(--textColor);
+  }
+ 
+  .btn-container button {  
+    font-family: var(--font);
+    background-color: transparent;
+    padding: 10px;
+    border: none;
+    font-size: 20px;
+    color: var(--textColor);
+    cursor: pointer;
+  }
+
+  footer{
+    color: var(--textColor);
+    padding: 16px;
+  }
+
+.smily{
+    margin: 18px 0 8px 0;
+    font-size: 35px;
+}
+.timer{
+  color: white;
+    width: 186px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    padding: 2px;
+}
+
+.flagCounter-Container{
+  color: white;
+    width: 186px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    padding: 2px;
+}
+
+

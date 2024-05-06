@@ -19,3 +19,14 @@ function getRandomCellLoc(firstClickedRow ,firstClickedcol) {
 	return emptyLocs[randomIndex]
 }
 
+function playSound(soundname) {
+
+	var Sound = new Audio(`./sound/${soundname}.mp3`)
+	Sound.play()
+
+}
+
+
+
+
+
