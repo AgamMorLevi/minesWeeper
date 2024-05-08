@@ -21,13 +21,91 @@ html, body {
 body {
     font-family: var(--font);
     text-align: center;
-    background-color: #000000e3;  
+    background-color: #000000e3; 
+    color: black; 
+    
+}
+
+
+.lightMode {
+  font-family: var(--font);
+    text-align: center;
+  background-color: aliceblue;
+ 
+}
+
+.lightMode h1 {
+  color:burlywood;
+}
+
+.lightMode .details-container{
+ color: burlywood;
+}
+
+.lightMode .cell {
+   
+    background-color: burlywood;
+
+}
+.lightMode .levels-container {
+ 
+  border-bottom: 1px solid burlywood;
+
+}
+
+
+.lightMode .levels-container button {
+  color: burlywood
+
+}
+
+.levels-container{
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 0 10%;
+  border-bottom: 1px solid var(--textColor);
+}
+
+.levels-container button {  
+  font-family: var(--font);
+  background-color: transparent;
+  padding: 10px;
+  border: none;
+  font-size: 20px;
+  color: var(--textColor);
+  cursor: pointer;
+}
+
+.details-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 25px;
+  width: 80%;
+  color: var(--textColor);
+  padding: 20px;
+  margin: 0 10%;
+  align-items: flex-end;
+}
+
+.smily{
+  font-size: 50px;
+}
+
+.timer{
+  padding: 2px;
+  width: 100px;
+}
+
+.flag-counter{
+  padding: 2px;
+  width: 100px;
 }
 
   .board-container {
     display: flex;
     justify-content: center;
-    transform: translateX(-22px);
 }
 
 .cell {
@@ -55,55 +133,80 @@ body {
     justify-content: flex-start;
     width: 55px;
   }
-  
+
   .live{
     margin-bottom: 10px;
     font-size: 24px;
   }
 
-  .btn-container{
+  .hints-container{
+    padding: 0 0 0 20px;
     display: flex;
-    justify-content: space-between;
-    width: 80%;
-    margin: 0 10%;
-    border-bottom: 1px solid var(--textColor);
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 55px;
   }
+
+    
+  .hint{
+    margin-bottom: 10px;
+    font-size: 24px;
+    cursor: pointer; 
+  }
+
+  .hint-active{
+    text-shadow: 0 0 10px #d4ff00,
+    0 0 0px #d4ff00,
+    0 0 0px #d4ff00,
+    0 0 4px #d4ff00,
+    0 0 5px #d4ff00,
+    0 0 0px #d4ff00,
+    0 0 0px #d4ff00
+  }
+
+  
+  .btnSafeClick-container{
+    
+    display: flex;
+     justify-content: center;
+     width: 80%;
+     margin: 0 10%;
+     padding: 30px;
+  
+ }
  
-  .btn-container button {  
-    font-family: var(--font);
-    background-color: transparent;
-    padding: 10px;
-    border: none;
-    font-size: 20px;
-    color: var(--textColor);
-    cursor: pointer;
-  }
+ .safe-clicked{
+   background-color:  #5ce97a;
+   background-image: none;
+ }
+ 
+ .btnSafeClick-container button{
+  font-family: var(--font);
+   background-color: #5ce97a;
+   border-radius:8px;
+   margin: 5px;
+   padding: 15px;
+   border: 8px;
+   cursor: pointer;
+ }
+
+ .manuallyMode{
+  
+  background-color:burlywood;
+  border-radius:8px;
+  margin: 5px;
+  padding: 15px;
+  border: 8px;
+  cursor: pointer;
+}
+ 
+  
+
+
 
   footer{
     color: var(--textColor);
     padding: 16px;
   }
-
-.smily{
-    margin: 18px 0 8px 0;
-    font-size: 35px;
-}
-.timer{
-  color: white;
-    width: 186px;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%);
-    padding: 2px;
-}
-
-.flagCounter-Container{
-  color: white;
-    width: 186px;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%);
-    padding: 2px;
-}
 
 
