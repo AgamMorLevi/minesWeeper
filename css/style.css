@@ -3,9 +3,10 @@
 }
 
 :root{
- --CellbackgroundColor: linear-gradient(to right,#433e3e8a, #00edffd6);
+ --CellbackgroundColor: linear-gradient(to right,#433e3e8a, #00eeff);
  --textColor : white; 
  --font: cursive;
+ --lightModeColor: #f2cea3;
 }
 
 h1{
@@ -35,27 +36,27 @@ body {
 }
 
 .lightMode h1 {
-  color:burlywood;
+  color:var(--lightModeColor);
 }
 
 .lightMode .details-container{
- color: burlywood;
+ color: var(--lightModeColor);
 }
 
 .lightMode .cell {
    
-    background-color: burlywood;
+    background-color: var(--lightModeColor);
 
 }
 .lightMode .levels-container {
  
-  border-bottom: 1px solid burlywood;
+  border-bottom: 1px solid var(--lightModeColor);
 
 }
 
 
 .lightMode .levels-container button {
-  color: burlywood
+  color: var(--lightModeColor)
 
 }
 
@@ -171,7 +172,7 @@ body {
      justify-content: center;
      width: 80%;
      margin: 0 10%;
-     padding: 30px;
+     padding: 30px 30px 10px;
   
  }
  
@@ -185,14 +186,18 @@ body {
    background-color: #5ce97a;
    border-radius:8px;
    margin: 5px;
-   padding: 15px;
+   padding: 7px;
    border: 8px;
    cursor: pointer;
  }
 
+ .lightMode .btnSafeClick-container button{
+  color: var(--textColor);
+ }
+
  .manuallyMode{
   
-  background-color:burlywood;
+  background-color:var( --lightModeColor);
   border-radius:8px;
   margin: 5px;
   padding: 15px;
@@ -200,13 +205,34 @@ body {
   cursor: pointer;
 }
  
-  
+.settings-container{
+    
+  display: flex;
+  justify-content: center;
+  width: 80%;
+  margin: 0 10%;
+  padding: 0 30px 30px 30px;
+}
 
+.settings-container button{
+  font-family: var(--font);
+  background-image: var(--CellbackgroundColor);
+  border-radius:8px;
+  margin: 5px;
+  padding: 7px;
+  border: 8px;
+  cursor: pointer;
+}
 
-
+ .lightMode .settings-container button{
+  color: var(--textColor);
+ }
   footer{
     color: var(--textColor);
     padding: 16px;
   }
 
 
+  .lightMode footer{
+    color: var( --lightModeColor);
+  }

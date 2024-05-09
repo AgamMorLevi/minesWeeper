@@ -2,6 +2,7 @@
 const MINE ='MINE'
 
 const MINE_IMG = '💣'
+const MINEEXT_IMG = '💥'
 var minesLoc = []
 var manuallyMode = false
 
@@ -10,29 +11,30 @@ function addMines(numOfMines, firstClickedRow, firstClickedcol){
 
 for(var y = 0; y < numOfMines; y++){
             const mine = getRandomCellLoc(firstClickedRow , firstClickedcol)
-            gBoard[mine.i][mine.j].isMine = true
+            gBoard[mine.i][mine.j].isMine = true           
             minesLoc.push(gBoard[mine.i][mine.j])
+
         }
     
 }
 
 function addMinesManually(numOfMines,i,j){
         
-        var cellLoc = gBoard[i][j]
-        cellLoc.isMine = true
-        cellLoc.isShown = true
-        minesLoc.push(cellLoc)
-        renderBoard(gBoard)
+    var cellLoc = gBoard[i][j]
+    cellLoc.isMine = true
+    cellLoc.isShown = true
+    minesLoc.push(cellLoc)
+    renderBoard(gBoard)
 
-    if(numOfMines === minesLoc.length){   
-        alert= 'All mines are placed, start playing'  
-        for(var y = 0; y < minesLoc.length; y++){
-          
-            minesLoc[y].isShown = false
-            console.log(minesLoc, i ,j)
+if(numOfMines === minesLoc.length){   
 
-        }
-      manuallyMode=false      
+    for(var y = 0; y < minesLoc.length; y++){
+      
+        minesLoc[y].isShown = false
+
+    }
+
+  manuallyMode=false      
 }       
 
 countMinesAroundCell(gBoard, i, j)
@@ -41,9 +43,19 @@ countMinesAroundCell(gBoard, i, j)
 
 
 function createMinesManuallyBtn(){
+
     var minesManuallyVal = ''
-    minesManuallyVal +=` <button onclick=" manuallyMode = true">Add Mines</button>`
-    document.querySelector('.manuallyModebtn').innerHTML = minesManuallyVal
+    minesManuallyVal =`<button class="manuallyModebtn" onclick="manuallyMode = true">Add Mines</button>`
+    document.querySelector('.manuallyModebtn-container').innerHTML = minesManuallyVal
+
+}
+
+function createMineExterminatorBtn(){
+    var mineExterminatorVal = ''
+    mineExterminatorVal =`<button class="exterminatorBtn" onclick="mineExterminator()">MINE EXTERMINATOR </button>`
+    document.querySelector('.exterminator').innerHTML = mineExterminatorVal
+
+    
 }
 
 
@@ -75,6 +87,31 @@ for (var i = 0; i < board.length; i++) {
         }
     }
    
+}
+
+
+function mineExterminator(){
+    var mineIdx = []
+    var previousIdx = -1
+
+while(mineIdx.length !== 3){
+    var randomIdx = getRandomInt(0, minesLoc.length)
+    
+    if (randomIdx === previousIdx) continue         
+    var elCell = document.querySelector(`.cell-${minesLoc[randomIdx].i}-${minesLoc[randomIdx].j}`)
+    minesLoc[randomIdx].isMine = false 
+    previousIdx = randomIdx
+    elCell.innerHTML = MINEEXT_IMG
+    mineIdx.push(randomIdx)
+}
+    
+    
+    minesLoc = minesLoc.filter((cell) => cell.isMine === true)
+    flagsCount -= mineIdx.length
+    document.querySelector('.exterminatorBtn').remove()
+    createFlagCounter()
+    setMinesNegsCount(gBoard)
+    
 }
 
 

@@ -23,7 +23,7 @@ const gLevel = [
 
 var level = gLevel[0]
 var isFirstClick = true
-var flagsCount = level.MINES
+var flagsCount = level.MINES 
 
 var gGame = {
     isOn: false, 
@@ -44,20 +44,23 @@ function onInit() {
 }
 
 function restartGame(){
+    createMinesManuallyBtn()
+    isFirstClick = true
     minesLoc = []
     lives = 3
     safeClickcount = 3
-    isFirstClick = true
+    flagsCount = level.MINES 
     hints = 3
-    gGame = {
-        isOn: false, 
-        shownCount: 0,
-        markedCount: 0,
-        secsPassed: 0 
-    }
+    
+    gGame.isOn= false
+    gGame.shownCount= 0
+    gGame.markedCount= 0
+    gGame.secsPassed= 0 
+    
 
     createHints()
     startTime = Date.now()
+
     onInit()
 }
 
@@ -72,7 +75,9 @@ function buildBoard(size) {
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
-                isMarked: false
+                isMarked: false,
+                i,
+                j
               }  
 
         }
@@ -89,8 +94,9 @@ function renderBoard(board){
         strHTML += '<tr>'      
         for (var j = 0; j < board[0].length; j++) {
             const cellLoc = board[i][j]
-            var numOfMinesAroundCell = cellLoc.minesAroundCount
             const className = `cell cell-${i}-${j}`
+            
+            var numOfMinesAroundCell = cellLoc.minesAroundCount
             var isShownCell =''
             var cellView = ''
           
@@ -107,7 +113,7 @@ function renderBoard(board){
              
             }  
             strHTML += 
-            `<td class="${className} ${isShownCell}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(event, this, ${i} ,${j})"> 
+            `<td class="${className} ${isShownCell}" onclick="onCellClicked( ${i}, ${j})" oncontextmenu="onCellMarked(event, this, ${i} ,${j})"> 
             ${cellView}
             </td>`  
         }
@@ -118,76 +124,84 @@ function renderBoard(board){
 } 
 
 
+function firstClick( i, j){
+         startTime = Date.now()   
+         gGame.secsPassed = setInterval(createTimer, 1000)
+          if(minesLoc.length === 0){
+             addMines(level.MINES, i, j)  
+          }
+ 
+         setMinesNegsCount(gBoard)   
+         createHints()
+         document.querySelector('.manuallyModebtn').remove()
+         if(level.MINES >  2)
+         createMineExterminatorBtn()
+         gGame.isOn = true
+         isFirstClick = false
+}
 
-function onCellClicked(elCell, i, j){ 
+
+function onCellClicked(i, j){ 
     const cellLoc = gBoard[i][j]
 
-    if (isFirstClick && manuallyMode === false ) {
-       startTime = Date.now()
-        
-        gGame.secsPassed = setInterval(createTimer, 1000)
-         if(minesLoc.length === 0){
-            addMines(level.MINES, i, j)  
-         }
-
-        setMinesNegsCount(gBoard)   
-        createHints()
-        document.querySelector('.manuallyModebtn').remove()
-
-        gGame.isOn = true
-        isFirstClick = false
+    if (isFirstClick && manuallyMode === false  ) {
+    firstClick(i, j)
     }
 
-    
     if(manuallyMode === true){
-        addMinesManually(level.MINES,i,j)  
+        addMinesManually( level.MINES,i,j)  
     }
-
-    if(hintMode){
-        hintClicked(i ,j)
-    }
-
+    
     if(cellLoc.isMarked || cellLoc.isShown || !gGame.isOn) return
+    
+    if(hintMode === true){
+        hintClicked(i ,j)
+        return
+    }
+
+   
+
     if(!cellLoc.isMine){
-        if( cellLoc.minesAroundCount === 0){                      
-            expandShown(gBoard,i, j)   
+        if( cellLoc.minesAroundCount === 0){                   
+            expandShown(gBoard ,i, j)   
          }
           else{
             cellLoc.isShown = true   
-            gGame.shownCount++   
-            renderBoard(gBoard)     
+            gGame.shownCount++  
+            renderBoard(gBoard) 
          }
-         
-         }else{
-            if(lives > 0){
+         }
+    else{
+        if(lives > 0){
                 lives--
                 playSound('lostLive')
 
                 createLives()
 
-            }else{
+        }else{
                 for(var x = 0; x < minesLoc.length; x++ ){
                     minesLoc[x].isShown = true      
                 } 
                 checkGameOver(true)
-            }
+        }
     
  
-        renderBoard(gBoard)    
+            renderBoard(gBoard)    
+     
     }
           
 }
 
 function onCellMarked(event ,elCell, i, j){
-   event.preventDefault()
-var cellLoc = gBoard[i][j]
-   if(cellLoc.isShown && !cellLoc.isMarked || !gGame.isOn) return
-   cellLoc.isMarked = !cellLoc.isMarked 
-   cellLoc.isMarked? gGame.markedCount++ : gGame.markedCount--  
-   cellLoc.isMarked? flagsCount-- : flagsCount++
-       createFlagCounter()
-   renderBoard(gBoard)  
-}
+    event.preventDefault()
+    var cellLoc = gBoard[i][j]
+    if(cellLoc.isShown && !cellLoc.isMarked || !gGame.isOn) return
+    cellLoc.isMarked = !cellLoc.isMarked 
+    cellLoc.isMarked? gGame.markedCount++ : gGame.markedCount--  
+    cellLoc.isMarked? flagsCount-- : flagsCount++
+        createFlagCounter()
+    renderBoard(gBoard)  
+ }
 
 
 function checkGameOver(checkIfLost){
@@ -207,23 +221,26 @@ function checkGameOver(checkIfLost){
    
 }
 
-function expandShown(board,rowIdx, colIdx){
+function expandShown(board, rowIdx, colIdx){
+
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
             if (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
                 const cellLoc = board[i][j] 
                 if (cellLoc.isMine || cellLoc.isMarked || cellLoc.isShown) continue                           
                     cellLoc.isShown = true 
-                    gGame.shownCount++   
+                    gGame.shownCount++  
+                    
                
                     if (cellLoc.minesAroundCount === 0) {
-                        expandShown(board, i, j)  
+                    
+                        expandShown(board ,i, j)  
                     }                                             
             }
         }
     
-    }    
-   renderBoard(gBoard)  
+    } 
+    renderBoard(gBoard)     
 }
 
 

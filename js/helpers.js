@@ -97,7 +97,6 @@ function safeClick(safeClickLoc){
 
         var safeClickLoc = getRandomCellLoc()
         var safeCell = gBoard[safeClickLoc.i][safeClickLoc.j]
-        console.log(safeCell)
         if(!safeCell.isMarked && !safeCell.isShown && !safeCell.isMine){
            
             var elSafeCell = document.querySelector(`.cell-${safeClickLoc.i}-${safeClickLoc.j}`)

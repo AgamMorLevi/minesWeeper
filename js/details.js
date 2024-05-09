@@ -49,10 +49,12 @@ function createTimer() {
 function createLives(){ 
     var livesVal = '' 
     for (var i = 0; i < lives; i++) {
-        livesVal += `<div class="live">${LIVE_IMG}</div>`     
+        livesVal += `<div class="live">${LIVE_IMG}</div>`    
+        
 }  
 document.querySelector('.lives-container').innerHTML = livesVal
 }
+
 
 function creatSmily(gameStatus){ 
     var smileyFace = SMILY_IMG   
@@ -71,7 +73,10 @@ function creatSmily(gameStatus){
             smileyFace = SMILY_IMG    
 
     }
-    
-    document.querySelector('.smily').innerHTML = smileyFace
+    var smilyVal = '' 
+    smilyVal += `<div class="smily"onclick="restartGame()">${smileyFace}</div>`
+
+    document.querySelector('.smily').innerHTML = smilyVal
 }
+
 
